@@ -13,7 +13,7 @@ import com.smart.service.UserDetailsServiceImpl;
 
 @Configuration
 @EnableWebSecurity
-public class MySecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	public UserDetailsService getUserDetailService() {
 		return new UserDetailsServiceImpl();

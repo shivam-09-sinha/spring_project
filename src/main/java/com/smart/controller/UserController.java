@@ -47,10 +47,6 @@ import com.smart.helper.Message;
 @Controller
 @RequestMapping("/user")
 public class UserController {
-
-	@Autowired
-	private BCryptPasswordEncoder bCryptPasswordEncoder;
-
 	@Autowired
 	private UserRepository userRepository;
 
@@ -61,22 +57,15 @@ public class UserController {
 	@ModelAttribute
 	public void addCommonData(Model model, Principal principal) {
 		String userName = principal.getName();
-		System.out.println("USERNAME " + userName);
-
 		// get the user using usernamne(Email)
-
-
 		User user = userRepository.getUserByUserName(userName);
-		System.out.println("USER " + user);
 		model.addAttribute("user", user);
-
 	}
-
 	// dashboard home
 	@RequestMapping("/index")
 	public String dashboard(Model model, Principal principal) {
 		model.addAttribute("title", "User Dashboard");
-		return "nondash/user_dashboard";
+		return "user/user_dashboard";
 	}
 
 	// open add form handler
@@ -84,27 +73,20 @@ public class UserController {
 	public String openAddContactForm(Model model) {
 		model.addAttribute("title", "Add Contact");
 		model.addAttribute("contact", new Contact());
-
-		return "nondash/add_contact_form";
+		return "user/add_contact_form";
 	}
-
 	// processing add contact form
 	@PostMapping("/process-contact")
 	public String processContact(@ModelAttribute Contact contact, @RequestParam("profileImage") MultipartFile file,
 			Principal principal, HttpSession session) {
-
 		try {
-
 			String name = principal.getName();
 			User user = this.userRepository.getUserByUserName(name);
-
 			// processing and uploading file..
-
 			if (file.isEmpty()) {
 				// if the file is empty then try our message
 				System.out.println("File is empty");
 				contact.setImage("contact.png");
-
 			} else {
 				// file the file to folder and update the name to contact
 				contact.setImage(file.getOriginalFilename());
@@ -116,9 +98,7 @@ public class UserController {
 				Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
 				System.out.println("Image is uploaded");
-
 			}
-
 			user.getContacts().add(contact);
 
 			contact.setUser(user);
@@ -137,10 +117,8 @@ public class UserController {
 			e.printStackTrace();
 			// message error
 			session.setAttribute("message", new Message("Some went wrong !! Try again..", "danger"));
-
 		}
-
-		return "nondash/add_contact_form";
+		return "user/add_contact_form";
 	}
 
 	// show contacts handler
@@ -149,10 +127,8 @@ public class UserController {
 	@GetMapping("/show-contacts/{page}")
 	public String showContacts(@PathVariable("page") Integer page, Model m, Principal principal) {
 		m.addAttribute("title", "Show User Contacts");
-		// contact ki list ko bhejni hai
-
+		// sending contacts list
 		String userName = principal.getName();
-
 		User user = this.userRepository.getUserByUserName(userName);
 
 		// currentPage-page
@@ -165,11 +141,9 @@ public class UserController {
 		m.addAttribute("currentPage", page);
 		m.addAttribute("totalPages", contacts.getTotalPages());
 
-		return "nondash/show_contacts";
+		return "user/show_contacts";
 	}
-
 	// showing particular contact details.
-
 	@RequestMapping("/{cId}/contact")
 	public String showContactDetail(@PathVariable("cId") Integer cId, Model model, Principal principal) {
 		System.out.println("CID " + cId);
@@ -186,11 +160,10 @@ public class UserController {
 			model.addAttribute("title", contact.getName());
 		}
 
-		return "nondash/contact_detail";
+		return "user/contact_detail";
 	}
 
 	// delete contact handler
-
 	@GetMapping("/delete/{cid}")
 	@Transactional
 	public String deleteContact(@PathVariable("cid") Integer cId, Model model, HttpSession session,
@@ -224,7 +197,7 @@ public class UserController {
 
 		m.addAttribute("contact", contact);
 
-		return "nondash/update_form";
+		return "user/update_form";
 	}
 
 	// update contact handler
@@ -241,7 +214,6 @@ public class UserController {
 			if (!file.isEmpty()) {
 				// file work..
 				// rewrite
-
 //				delete old photo
 
 				File deleteFile = new ClassPathResource("static/img").getFile();
@@ -251,75 +223,27 @@ public class UserController {
 //				update new photo
 
 				File saveFile = new ClassPathResource("static/img").getFile();
-
 				Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + file.getOriginalFilename());
-
 				Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-
 				contact.setImage(file.getOriginalFilename());
-
 			} else {
 				contact.setImage(oldcontactDetail.getImage());
 			}
-
 			User user = this.userRepository.getUserByUserName(principal.getName());
-
 			contact.setUser(user);
-
 			this.contactRepository.save(contact);
-
 			session.setAttribute("message", new Message("Your contact is updated...", "success"));
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		System.out.println("CONTACT NAME " + contact.getName());
 		System.out.println("CONTACT ID " + contact.getcId());
 		return "redirect:/user/" + contact.getcId() + "/contact";
 	}
-
 	// your profile handler
 	@GetMapping("/profile")
 	public String yourProfile(Model model) {
 		model.addAttribute("title", "Profile Page");
-		return "nondash/profile";
+		return "user/profile";
 	}
-
-	// open settings handler
-	@GetMapping("/settings")
-	public String openSettings() {
-		return "nondash/settings";
-	}
-
-	// change password..handler
-	@PostMapping("/change-password")
-	public String changePassword(@RequestParam("oldPassword") String oldPassword,
-			@RequestParam("newPassword") String newPassword, Principal principal, HttpSession session) {
-		System.out.println("OLD PASSWORD " + oldPassword);
-		System.out.println("NEW PASSWORD " + newPassword);
-
-		String userName = principal.getName();
-		User currentUser = this.userRepository.getUserByUserName(userName);
-		System.out.println(currentUser.getPassword());
-
-		if (this.bCryptPasswordEncoder.matches(oldPassword, currentUser.getPassword())) {
-			// change the password
-
-			currentUser.setPassword(this.bCryptPasswordEncoder.encode(newPassword));
-			this.userRepository.save(currentUser);
-			session.setAttribute("message", new Message("Your password is successfully changed..", "success"));
-
-		} else {
-			// error...
-			session.setAttribute("message", new Message("Please Enter correct old password !!", "danger"));
-			return "redirect:/user/settings";
-		}
-
-		return "redirect:/user/index";
-	}
-
-
-	
-
 }
