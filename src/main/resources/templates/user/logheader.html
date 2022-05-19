@@ -18,14 +18,6 @@
 <link rel="stylesheet" th:href="@{/css/style.css}" />
 
 <title th:text="${title}">header html</title>
-
-	<!-- Optional JavaScript -->
-	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-	<!--  
-	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-		integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-		crossorigin="anonymous"></script>
-	-->
 		
 		<script
   src="https://code.jquery.com/jquery-3.5.1.min.js"
@@ -40,7 +32,7 @@
 
 	<nav class=" fixed-top navbar navbar-expand-lg navbar-dark  bg-primary">
 	
-		<a class="navbar-brand" href="#">Connecting Peoples</a>
+		<a class="navbar-brand" href="#">Contact Digitilization Peoples</a>
 		
 		
 		<button class="navbar-toggler" type="button" data-toggle="collapse"
@@ -86,8 +78,7 @@
 		<a id="contacts-link" href="#" th:href="@{/user/show-contacts/0}" class="item"><i class="fas fa-id-card-alt"></i> View Contacts</a>
 		<a id="add-link" href="#" th:href="@{/user/add-contact}" class="item"><i class="fas fa-pencil-alt"></i> Add Contact</a>
 		<a id="profile-link" href="#" th:href="@{/user/profile}" class="item"><i class="fas fa-user-circle"></i> Your Profile </a>
-		<a id="settings-link" href="#" th:href="@{/user/settings}" class="item"> <i class="fas fa-cogs"></i> Settings</a>
-		<a href="#" th:href="@{/logout}" class="item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+
 		<div class="divider"></div>
 		
 	</div>

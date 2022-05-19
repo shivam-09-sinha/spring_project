@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-	th:replace="nondash/logheader::layout(~{::section})">
+	th:replace="user/logheader::layout(~{::section})">
 <head>
 <meta charset="UTF-8" />
 <title>this is home page</title>
@@ -26,12 +26,7 @@
 						
 						<hr />
 						
-<!--						<h3 class="my-3">Donate Us</h3>-->
-<!--						<input id="payment_field" type="text" class="form-control my-2" placeholder="Enter amount here" />-->
-<!--						-->
-<!--						<div class="container text-center mt-3">-->
-<!--							<button onclick="paymentStart()" class="btn btn-success btn-block">Checkout</button>-->
-<!--						</div>-->
+
 
 				</div>
 			</div>
@@ -43,7 +38,7 @@
           $("#home-link").addClass("active");
         });
       </script>
-      <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 	</section>
 </body>
 </html>
